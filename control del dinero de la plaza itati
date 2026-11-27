@@ -1,76 +1,157 @@
-def modificar_registro(registros):
-    """Permite buscar un registro y modificar sus datos."""
+def validar_texto(mensaje):
+    """Recibe un texto y devuelve el texto si es correcto."""
+    while True:
+        texto = input(mensaje).strip()
 
-    nombre = input("Ingrese el nombre de la actividad que desea modificar: ").strip().lower()
+        if texto != "":
+            return texto
+
+        print("El texto no puede estar vacío.")
+
+
+def validar_decimal_positivo(mensaje):
+    """Recibe un número y devuelve un decimal positivo."""
+    while True:
+        try:
+            numero = float(input(mensaje))
+
+            if numero > 0:
+                return numero
+
+            print("Ingrese un número mayor que cero.")
+
+        except ValueError:
+            print("Ingrese un número válido.")
+
+
+def validar_entero_no_negativo(mensaje):
+    """Recibe un entero y devuelve el número si es válido."""
+    while True:
+        try:
+            numero = int(input(mensaje))
+
+            if numero >= 0:
+                return numero
+
+            print("No se permiten números negativos.")
+
+        except ValueError:
+            print("Ingrese un número entero.")
+
+
+def alta_registro(registros):
+    """Registra una actividad de la plaza."""
+    print("\n--- NUEVO REGISTRO ---")
+
+    nombre = validar_texto("Nombre de la actividad: ")
+    responsable = validar_texto("Nombre del responsable: ")
+    fecha = validar_texto("Fecha de la actividad: ")
+
+    registro = {
+        "nombre": nombre,
+        "responsable": responsable,
+        "fecha": fecha
+    }
+
+    registros.append(registro)
+
+    print("Registro guardado correctamente.")
+    return registro
+
+
+def listar_registros(registros):
+    """Muestra todos los registros guardados."""
+
+    if len(registros) == 0:
+        print("No hay actividades registradas.")
+        return
+
+    for registro in registros:
+        print("\nActividad:", registro["nombre"])
+        print("Responsable:", registro["responsable"])
+        print("Fecha:", registro["fecha"])
+
+
+def mostrar_mensaje(mensaje):
+    """Muestra un mensaje al usuario."""
+    print(mensaje)
+
+
+def buscar_registro(registros):
+    """Busca una actividad por su nombre."""
+
+    nombre = validar_texto("Ingrese el nombre de la actividad: ").lower()
 
     for registro in registros:
         if registro["nombre"].lower() == nombre:
-
-            print("\nRegistro encontrado.")
-
-            registro["nombre"] = validar_texto("Nuevo nombre de la actividad: ")
-            registro["responsable"] = validar_texto("Nuevo responsable: ")
-            registro["fecha"] = validar_texto("Nueva fecha: ")
-
-            print("Registro modificado correctamente.")
+            print("Actividad encontrada:", registro)
             return registro
 
-    print("No se encontró el registro solicitado.")
+    mostrar_mensaje("No se encontraron resultados.")
     return None
 
 
-def eliminar_registro(registros):
-    """Permite eliminar un registro después de confirmar la acción."""
+def modificar_registro(registros):
+    """Permite modificar los datos de una actividad."""
 
-    if len(registros) == 0:
-        print("No hay registros para eliminar.")
+    registro = buscar_registro(registros)
+
+    if registro is None:
         return
 
-    nombre = input("Ingrese el nombre de la actividad que desea eliminar: ").strip().lower()
+    registro["nombre"] = validar_texto("Nuevo nombre: ")
+    registro["responsable"] = validar_texto("Nuevo responsable: ")
+    registro["fecha"] = validar_texto("Nueva fecha: ")
 
-    for registro in registros:
-        if registro["nombre"].lower() == nombre:
+    print("Registro modificado correctamente.")
 
-            confirmacion = input("¿Confirma que desea eliminarlo? (si/no): ").strip().lower()
 
-            if confirmacion == "si":
-                registros.remove(registro)
-                print("Registro eliminado correctamente.")
-            else:
-                print("Se conservó el registro.")
+def eliminar_registro(registros):
+    """Elimina un registro después de confirmar."""
 
-            return
+    registro = buscar_registro(registros)
 
-    print("No se encontró el registro solicitado.")
+    if registro is None:
+        return
+
+    confirmacion = input("¿Desea eliminarlo? (si/no): ").lower()
+
+    if confirmacion == "si":
+        registros.remove(registro)
+        print("Registro eliminado correctamente.")
+    else:
+        print("El registro se conserva.")
+
+
+def calcular_recaudacion_pollos():
+    """Calcula el dinero recaudado por la venta de pollos."""
+
+    cantidad = validar_entero_no_negativo("Cantidad de pollos vendidos: ")
+    precio = validar_decimal_positivo("Precio de cada pollo: $")
+
+    total = cantidad * precio
+
+    print("Total recaudado por la venta: $", total)
+
+    return total
 
 
 def calcular_saldo(ventas, donaciones, gastos):
     """Calcula el dinero disponible para arreglar la plaza."""
 
-    total_recaudado = 0
-
-    for venta in ventas:
-        total_recaudado += venta
-
-    for donacion in donaciones:
-        total_recaudado += donacion
-
-    total_gastos = 0
-
-    for gasto in gastos:
-        total_gastos += gasto
+    total_recaudado = sum(ventas) + sum(donaciones)
+    total_gastos = sum(gastos)
 
     saldo = total_recaudado - total_gastos
 
     print("\n--- RESUMEN ECONÓMICO ---")
-    print("Total de ventas: $", sum(ventas))
-    print("Total de donaciones: $", sum(donaciones))
+    print("Ventas: $", sum(ventas))
+    print("Donaciones: $", sum(donaciones))
     print("Total recaudado: $", total_recaudado)
-    print("Total de gastos: $", total_gastos)
+    print("Gastos: $", total_gastos)
 
     if saldo < 0:
-        print("ADVERTENCIA: Los gastos superan el dinero recaudado.")
-        print("Saldo: $", saldo)
+        print("ADVERTENCIA: Los gastos superan lo recaudado.")
     else:
         print("Dinero disponible: $", saldo)
 
@@ -78,26 +159,95 @@ def calcular_saldo(ventas, donaciones, gastos):
 
 
 def registrar_gastos(gastos, saldo):
-    """Permite guardar los gastos realizados para arreglar la plaza."""
-
-    if saldo <= 0:
-        print("No hay dinero disponible para registrar nuevos gastos.")
-        return
+    """Registra los gastos realizados para arreglar la plaza."""
 
     while True:
-        try:
-            importe = float(input("Ingrese el importe del gasto: $"))
+        importe = validar_decimal_positivo("Ingrese el importe del gasto: $")
 
-            if importe <= 0:
-                print("El importe debe ser positivo.")
+        if importe > saldo:
+            print("ADVERTENCIA: El gasto supera el dinero disponible.")
+        else:
+            gastos.append(importe)
+            print("Gasto registrado correctamente.")
+            return importe
 
-            elif importe > saldo:
-                print("ADVERTENCIA: El gasto supera el dinero disponible.")
 
-            else:
-                gastos.append(importe)
-                print("Gasto registrado correctamente.")
-                return importe
+def menu_busqueda(registros):
+    """Permite listar y buscar actividades."""
 
-        except ValueError:
-            print("Dato incorrecto. Ingrese un importe válido.")
+    while True:
+        print("\n--- MENÚ DE CONSULTAS ---")
+        print("1. Listar actividades")
+        print("2. Buscar actividad")
+        print("3. Volver")
+
+        opcion = input("Seleccione una opción: ")
+
+        if opcion == "1":
+            listar_registros(registros)
+        elif opcion == "2":
+            buscar_registro(registros)
+        elif opcion == "3":
+            break
+        else:
+            print("Opción incorrecta.")
+
+
+def programa_principal():
+
+    registros = []
+    ventas = []
+    donaciones = []
+    gastos = []
+
+    while True:
+        print("\n===== PLAZA ITATÍ =====")
+        print("1. Registrar venta de pollos")
+        print("2. Registrar donaciones")
+        print("3. Registrar gastos")
+        print("4. Consultar dinero recaudado")
+        print("5. Registrar actividad")
+        print("6. Consultar actividades")
+        print("7. Modificar registro")
+        print("8. Eliminar registro")
+        print("9. Salir")
+
+        opcion = input("Seleccione una opción: ")
+
+        if opcion == "1":
+            total = calcular_recaudacion_pollos()
+            ventas.append(total)
+
+        elif opcion == "2":
+            donacion = validar_decimal_positivo("Ingrese el monto de la donación: $")
+            donaciones.append(donacion)
+            print("Donación registrada correctamente.")
+
+        elif opcion == "3":
+            saldo = calcular_saldo(ventas, donaciones, gastos)
+            registrar_gastos(gastos, saldo)
+
+        elif opcion == "4":
+            calcular_saldo(ventas, donaciones, gastos)
+
+        elif opcion == "5":
+            alta_registro(registros)
+
+        elif opcion == "6":
+            menu_busqueda(registros)
+
+        elif opcion == "7":
+            modificar_registro(registros)
+
+        elif opcion == "8":
+            eliminar_registro(registros)
+
+        elif opcion == "9":
+            print("Gracias por colaborar con la Plaza Itatí.")
+            break
+
+        else:
+            print("Opción incorrecta. Intente nuevamente.")
+
+
+programa_principal()
