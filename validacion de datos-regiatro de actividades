@@ -2,56 +2,77 @@ def validar_texto(mensaje):
     """Recibe un texto y devuelve el texto si es correcto."""
     while True:
         texto = input(mensaje).strip()
+
         if texto != "":
             return texto
-        print("El campo no puede estar vacío. Intentá de nuevo.")
+        else:
+            print("El texto no puede estar vacío.")
 
 
 def validar_decimal_positivo(mensaje):
     """Recibe un número y devuelve un decimal positivo."""
     while True:
         try:
-            valor = float(input(mensaje))
-            if valor > 0:
-                return valor
-            print("El valor debe ser mayor a cero.")
+            numero = float(input(mensaje))
+
+            if numero > 0:
+                return numero
+            else:
+                print("El número debe ser positivo.")
+
         except ValueError:
-            print("Valor inválido. Ingresá un número.")
+            print("Ingrese un número válido.")
 
 
 def validar_entero_no_negativo(mensaje):
     """Recibe un número entero y devuelve el número si es válido."""
     while True:
         try:
-            valor = int(input(mensaje))
-            if valor >= 0:
-                return valor
-            print("El valor no puede ser negativo.")
+            numero = int(input(mensaje))
+
+            if numero >= 0:
+                return numero
+            else:
+                print("El número no puede ser negativo.")
+
         except ValueError:
-            print("Valor inválido. Ingresá un número entero.")
+            print("Ingrese un número entero válido.")
 
 
-def alta_registro(inventario):
+def alta_registro(registros, tipo):
     """Recibe los datos de una actividad y devuelve un registro guardado correctamente."""
 
     print("\n--- NUEVO REGISTRO ---")
 
-    nombre = validar_texto("Nombre de la actividad: ")
-    precio = validar_decimal_positivo("Precio o monto: $")
-    cantidad = validar_entero_no_negativo("Cantidad o stock: ")
-    fecha = validar_texto("Fecha límite (dd/mm/aaaa): ")
+    if tipo == "venta de pollos":
+        nombre = validar_texto("Nombre del comprador: ")
+        monto = validar_decimal_positivo("Monto de la venta: ")
+        cantidad = validar_entero_no_negativo("Cantidad de pollos vendidos: ")
 
-    # Estructura del diccionario
-    nuevo_registro = {
+    elif tipo == "donaciones":
+        nombre = validar_texto("Nombre del vecino: ")
+        monto = validar_decimal_positivo("Monto de la donación: ")
+        cantidad = 0
+
+    elif tipo == "gastos":
+        nombre = validar_texto("Material comprado: ")
+        monto = validar_decimal_positivo("Costo del material: ")
+        cantidad = validar_entero_no_negativo("Cantidad comprada: ")
+
+    elif tipo == "colaboradores":
+        nombre = validar_texto("Nombre del vecino colaborador: ")
+        monto = 0
+        cantidad = 0
+
+    registro = {
+        "actividad": tipo,
         "nombre": nombre,
-        "precio": precio,
-        "cantidad": cantidad,
-        "fecha": fecha,
-        "publicado": False
+        "monto": monto,
+        "cantidad": cantidad
     }
 
-    inventario.append(nuevo_registro)
+    registros.append(registro)
 
-    print("¡Registro guardado correctamente!")
+    print("Registro guardado correctamente.")
 
-    return nuevo_registro
+    return registro
