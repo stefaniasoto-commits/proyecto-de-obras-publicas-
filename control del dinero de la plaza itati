@@ -1,0 +1,103 @@
+def modificar_registro(registros):
+    """Permite buscar un registro y modificar sus datos."""
+
+    nombre = input("Ingrese el nombre de la actividad que desea modificar: ").strip().lower()
+
+    for registro in registros:
+        if registro["nombre"].lower() == nombre:
+
+            print("\nRegistro encontrado.")
+
+            registro["nombre"] = validar_texto("Nuevo nombre de la actividad: ")
+            registro["responsable"] = validar_texto("Nuevo responsable: ")
+            registro["fecha"] = validar_texto("Nueva fecha: ")
+
+            print("Registro modificado correctamente.")
+            return registro
+
+    print("No se encontró el registro solicitado.")
+    return None
+
+
+def eliminar_registro(registros):
+    """Permite eliminar un registro después de confirmar la acción."""
+
+    if len(registros) == 0:
+        print("No hay registros para eliminar.")
+        return
+
+    nombre = input("Ingrese el nombre de la actividad que desea eliminar: ").strip().lower()
+
+    for registro in registros:
+        if registro["nombre"].lower() == nombre:
+
+            confirmacion = input("¿Confirma que desea eliminarlo? (si/no): ").strip().lower()
+
+            if confirmacion == "si":
+                registros.remove(registro)
+                print("Registro eliminado correctamente.")
+            else:
+                print("Se conservó el registro.")
+
+            return
+
+    print("No se encontró el registro solicitado.")
+
+
+def calcular_saldo(ventas, donaciones, gastos):
+    """Calcula el dinero disponible para arreglar la plaza."""
+
+    total_recaudado = 0
+
+    for venta in ventas:
+        total_recaudado += venta
+
+    for donacion in donaciones:
+        total_recaudado += donacion
+
+    total_gastos = 0
+
+    for gasto in gastos:
+        total_gastos += gasto
+
+    saldo = total_recaudado - total_gastos
+
+    print("\n--- RESUMEN ECONÓMICO ---")
+    print("Total de ventas: $", sum(ventas))
+    print("Total de donaciones: $", sum(donaciones))
+    print("Total recaudado: $", total_recaudado)
+    print("Total de gastos: $", total_gastos)
+
+    if saldo < 0:
+        print("ADVERTENCIA: Los gastos superan el dinero recaudado.")
+        print("Saldo: $", saldo)
+    else:
+        print("Dinero disponible: $", saldo)
+
+    return saldo
+
+
+def registrar_gastos(gastos, saldo):
+    """Permite guardar los gastos realizados para arreglar la plaza."""
+
+    if saldo <= 0:
+        print("No hay dinero disponible para registrar nuevos gastos.")
+        return
+
+    while True:
+        try:
+            importe = float(input("Ingrese el importe del gasto: $"))
+
+            if importe <= 0:
+                print("El importe debe ser positivo.")
+
+            elif importe > saldo:
+                print("ADVERTENCIA: El gasto supera el dinero disponible.")
+
+            else:
+                gastos.append(importe)
+                print("Gasto registrado correctamente.")
+                return importe
+
+        except ValueError:
+            print("Dato incorrecto. Ingrese un importe válido.")
