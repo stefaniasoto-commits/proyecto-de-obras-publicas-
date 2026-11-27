@@ -1,0 +1,57 @@
+def validar_texto(mensaje):
+    """Recibe un texto y devuelve el texto si es correcto."""
+    while True:
+        texto = input(mensaje).strip()
+        if texto != "":
+            return texto
+        print("El campo no puede estar vacío. Intentá de nuevo.")
+
+
+def validar_decimal_positivo(mensaje):
+    """Recibe un número y devuelve un decimal positivo."""
+    while True:
+        try:
+            valor = float(input(mensaje))
+            if valor > 0:
+                return valor
+            print("El valor debe ser mayor a cero.")
+        except ValueError:
+            print("Valor inválido. Ingresá un número.")
+
+
+def validar_entero_no_negativo(mensaje):
+    """Recibe un número entero y devuelve el número si es válido."""
+    while True:
+        try:
+            valor = int(input(mensaje))
+            if valor >= 0:
+                return valor
+            print("El valor no puede ser negativo.")
+        except ValueError:
+            print("Valor inválido. Ingresá un número entero.")
+
+
+def alta_registro(inventario):
+    """Recibe los datos de una actividad y devuelve un registro guardado correctamente."""
+
+    print("\n--- NUEVO REGISTRO ---")
+
+    nombre = validar_texto("Nombre de la actividad: ")
+    precio = validar_decimal_positivo("Precio o monto: $")
+    cantidad = validar_entero_no_negativo("Cantidad o stock: ")
+    fecha = validar_texto("Fecha límite (dd/mm/aaaa): ")
+
+    # Estructura del diccionario
+    nuevo_registro = {
+        "nombre": nombre,
+        "precio": precio,
+        "cantidad": cantidad,
+        "fecha": fecha,
+        "publicado": False
+    }
+
+    inventario.append(nuevo_registro)
+
+    print("¡Registro guardado correctamente!")
+
+    return nuevo_registro
