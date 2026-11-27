@@ -1,0 +1,78 @@
+def validar_texto(mensaje):
+    """Recibe un texto y devuelve el texto si es correcto."""
+    while True:
+        texto = input(mensaje).strip()
+
+        if texto != "":
+            return texto
+        else:
+            print("El texto no puede estar vacío.")
+
+
+def validar_decimal_positivo(mensaje):
+    """Recibe un número y devuelve un decimal positivo."""
+    while True:
+        try:
+            numero = float(input(mensaje))
+
+            if numero > 0:
+                return numero
+            else:
+                print("El número debe ser positivo.")
+
+        except ValueError:
+            print("Ingrese un número válido.")
+
+
+def validar_entero_no_negativo(mensaje):
+    """Recibe un número entero y devuelve el número si es válido."""
+    while True:
+        try:
+            numero = int(input(mensaje))
+
+            if numero >= 0:
+                return numero
+            else:
+                print("El número no puede ser negativo.")
+
+        except ValueError:
+            print("Ingrese un número entero válido.")
+
+
+def alta_registro(registros, tipo):
+    """Recibe los datos de una actividad y devuelve un registro guardado correctamente."""
+
+    print("\n--- NUEVO REGISTRO ---")
+
+    if tipo == "venta de pollos":
+        nombre = validar_texto("Nombre del comprador: ")
+        monto = validar_decimal_positivo("Monto de la venta: ")
+        cantidad = validar_entero_no_negativo("Cantidad de pollos vendidos: ")
+
+    elif tipo == "donaciones":
+        nombre = validar_texto("Nombre del vecino: ")
+        monto = validar_decimal_positivo("Monto de la donación: ")
+        cantidad = 0
+
+    elif tipo == "gastos":
+        nombre = validar_texto("Material comprado: ")
+        monto = validar_decimal_positivo("Costo del material: ")
+        cantidad = validar_entero_no_negativo("Cantidad comprada: ")
+
+    elif tipo == "colaboradores":
+        nombre = validar_texto("Nombre del vecino colaborador: ")
+        monto = 0
+        cantidad = 0
+
+    registro = {
+        "actividad": tipo,
+        "nombre": nombre,
+        "monto": monto,
+        "cantidad": cantidad
+    }
+
+    registros.append(registro)
+
+    print("Registro guardado correctamente.")
+
+    return registro
